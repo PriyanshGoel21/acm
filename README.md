@@ -1,0 +1,2 @@
+# ACM Helper Bot
+ACM Helper Bot is a custom-built Discord bot tailored specifically for the ACM MUJ server. With a focus on enhancing the ACM server experience, the ACM Helper Bot offers a wide range of features, including moderation tools, event management capabilities, interactive commands, and other quality of life features. Developed using the discord.py framework, this repository invites developers, ACM members, and enthusiasts to collaborate, contribute, and make the ACM server an even better place for learning, networking, and engaging with fellow members. 
