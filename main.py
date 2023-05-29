@@ -1,18 +1,86 @@
+import asyncio
+import logging
+import logging.handlers
+import os
+
+from typing import List, Optional
+
 import discord
+from discord.ext import commands
+from aiohttp import ClientSession
 
 
-class MyClient(discord.Client):
-    async def on_ready(self):
-        print(f'Logged in as {self.user} (ID: {self.user.id})')
-        print('------')
+class Bot(commands.Bot):
+    def __init__(
+            self,
+            *args,
+            initial_extensions: List[str],
+            testing_guild_id: Optional[int] = None,
+            **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        self.testing_guild_id = testing_guild_id
+        self.initial_extensions = initial_extensions
 
-    async def on_member_join(self, member:discord.Member):
-        channel: discord.TextChannel = member.guild.get_channel(1112320464346431598)
+    async def setup_hook(self) -> None:
+
+        for filename in os.listdir("cogs"):
+            if filename.endswith(".py"):
+                await self.load_extension(f"cogs.{filename[:-3]}")
+
+        if self.testing_guild_id:
+            guild = discord.Object(self.testing_guild_id)
+            self.tree.copy_global_to(guild=guild)
+            await self.tree.sync(guild=guild)
+
+    async def on_member_join(self, member: discord.Member):
+        channel: discord.TextChannel = self.get_channel(1112320464346431598)
         await channel.send(f"Hi {member.mention} Welcome to ACM MUJ! Head over to <id:customize>"
                            f" to get roles and get started.")
 
 
-intents = discord.Intents.all()
-client = MyClient(intents=intents)
+async def main():
+    # When taking over how the bot process is run, you become responsible for a few additional things.
 
-client.run('MTExMjExMTEyMzQyMDkzODI3MA.G0Yh0J.wskncyVWURB-r5C1gLgwhvNB3Bc7e87eFprx5Y')
+    # 1. logging
+
+    # for this example, we're going to set up a rotating file logger.
+    # for more info on setting up logging,
+    # see https://discordpy.readthedocs.io/en/latest/logging.html and https://docs.python.org/3/howto/logging.html
+
+    logger = logging.getLogger('discord')
+    logger.setLevel(logging.INFO)
+
+    handler = logging.handlers.RotatingFileHandler(
+        filename='discord.log',
+        encoding='utf-8',
+        maxBytes=32 * 1024 * 1024,  # 32 MiB
+        backupCount=5,  # Rotate through 5 files
+    )
+    dt_fmt = '%Y-%m-%d %H:%M:%S'
+    formatter = logging.Formatter('[{asctime}] [{levelname:<8}] {name}: {message}', dt_fmt, style='{')
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
+    # Alternatively, you could use:
+    # discord.utils.setup_logging(handler=handler, root=False)
+
+    # One of the reasons to take over more of the process though
+    # is to ensure use with other libraries or tools which also require their own cleanup.
+
+    # Here we have a web client and a database pool, both of which do cleanup at exit.
+    # We also have our bot, which depends on both of these.
+
+    extensions = ['general', 'mod', 'dice']
+    async with Bot(commands.when_mentioned, initial_extensions=extensions, intents=discord.Intents.all()) as bot:
+        await bot.start(os.getenv('TOKEN', ''))
+
+
+# For most use cases, after defining what needs to run, we can just tell asyncio to run it:
+asyncio.run(main())
+
+
+async def on_member_join(self, member: discord.Member):
+    channel: discord.TextChannel = member.guild.get_channel(1112320464346431598)
+    await channel.send(f"Hi {member.mention} Welcome to ACM MUJ! Head over to <id:customize>"
+                       f" to get roles and get started.")
