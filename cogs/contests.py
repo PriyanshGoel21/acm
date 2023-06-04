@@ -22,8 +22,9 @@ class Contests(commands.Cog, name="contests"):
     @tasks.loop(seconds=1)
     async def update_contests(self):
         now: datetime.datetime = datetime.datetime.now(ZoneInfo('Asia/Kolkata'))
-        tomorrow = datetime.datetime(now.year, now.month, now.day, 0, 0, 0, 0, ZoneInfo('Asia/Kolkata')) + datetime.timedelta(days=1)
-        await asyncio.sleep((tomorrow-now).seconds)
+        tomorrow = datetime.datetime(now.year, now.month, now.day, 0, 0, 0, 0,
+                                     ZoneInfo('Asia/Kolkata')) + datetime.timedelta(days=1)
+        await asyncio.sleep((tomorrow - now).seconds)
         headers = {"Authorization": os.getenv("CLIST_API_KEY")}
         guild: discord.Guild = self.bot.get_guild(1112237234490445857)
         channel: discord.TextChannel = guild.get_channel(1112323650725630046)
@@ -72,33 +73,15 @@ class Contests(commands.Cog, name="contests"):
                                 embeds.append(embed)
                             except Exception as E:
                                 print(E)
-                    await channel.send(f"<@1112320105586622594> Here is a list of competitive programming events"
+                    await channel.send(f"<@&1112320105586622594> Here is a list of competitive programming events"
                                        f" being hosted today!", embeds=embeds)
             except Exception as E:
                 print(E)
 
-    @commands.is_owner()
-    @commands.command()
-    async def update_events(self, ctx: commands.Context):
-        await ctx.message.delete()
-        for event in ctx.guild.scheduled_events:
-            await event.delete()
-        await self.update_contests()
-
-    @commands.is_owner()
-    @commands.command()
-    async def tesst(self, ctx: commands.Context):
-        guild: discord.Guild = self.bot.get_guild(1001523934979690566)
-        if (
-                discord.utils.get(
-                    guild.scheduled_events,
-                    location="https://codingcompetitions.withgoogle.com/kickstart/round/00000000008cb1b6",
-                )
-                is None
-        ):
-            await ctx.send("Ok")
-        else:
-            await ctx.send("not ok")
+    # @commands.is_owner()
+    # @commands.command()
+    # async def update(self, ctx: commands.Context):
+    #     ...
 
 
 async def setup(bot: commands.Bot):
