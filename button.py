@@ -9,11 +9,12 @@ class PersistentView(discord.ui.View):
     @discord.ui.button(label='Get Started', style=discord.ButtonStyle.green, custom_id='persistent_view:id')
     async def green(self, interaction: discord.Interaction, button: discord.ui.Button):
         async with interaction.client.db_pool.acquire() as connection:
-            async with connection.transaction():
-                try:
+            try:
+                async with connection.transaction():
                     await connection.execute('''INSERT INTO "User"(id, name) VALUES($1, $2)''',
-                                         str(interaction.user.id), interaction.user.display_name)
-                except asyncpg.UniqueViolationError as E:
+                                             str(interaction.user.id), interaction.user.display_name)
+            except asyncpg.UniqueViolationError as E:
+                async with connection.transaction():
                     await connection.execute('''UPDATE "User" set name=$1 WHERE id=$2''',
                                          interaction.user.display_name, str(interaction.user.id))
 
