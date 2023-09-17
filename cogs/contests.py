@@ -7,6 +7,7 @@ import discord
 from discord.ext import commands, tasks
 from zoneinfo import ZoneInfo
 import re
+from button import PersistentView
 
 
 class Contests(commands.Cog, name="contests"):
@@ -79,9 +80,9 @@ class Contests(commands.Cog, name="contests"):
                 print(E)
 
     # @commands.is_owner()
-    # @commands.command()
-    # async def update(self, ctx: commands.Context):
-    #     ...
+    @commands.command()
+    async def decode(self, ctx: commands.Context):
+        await ctx.send(embed=discord.Embed(title="Get Started"), view=PersistentView())
 
 
 async def setup(bot: commands.Bot):
