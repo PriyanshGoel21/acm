@@ -125,7 +125,7 @@ class CustomBot(commands.Bot):
 
     async def on_member_join(self, member: discord.Member):
         if member.guild.id == 1157385827756818535:
-            channel: discord.TextChannel = self.get_channel(1157385827756818535)
+            channel: discord.TextChannel = self.get_channel(1157391321707855964)
             get_started: discord.TextChannel = self.get_channel(1157391112529510492)
             await channel.send(
                 f"Hi {member.mention} Welcome to Elicit! Head over to {get_started.mention}"
