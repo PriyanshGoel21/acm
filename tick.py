@@ -91,6 +91,7 @@ class Confirm(discord.ui.View):
     async def confirm_button(self, interaction: discord.Interaction, button):
         if interaction.channel.category_id == 1157425296732078192:
             embed = discord.Embed(color=discord.Color.red())
+            mod = interaction.guild.get_role(1157394375198912644)
             perms_ticket = {
                 interaction.guild.default_role: discord.PermissionOverwrite(
                     view_channel=False
@@ -98,6 +99,10 @@ class Confirm(discord.ui.View):
                 interaction.user: discord.PermissionOverwrite(
                     view_channel=True,
                     send_messages=False,
+                ),
+                mod: discord.PermissionOverwrite(
+                    view_channel=True,
+                    send_messages=True,
                 ),
             }
             await interaction.channel.edit(
