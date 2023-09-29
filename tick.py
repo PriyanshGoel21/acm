@@ -91,8 +91,18 @@ class Confirm(discord.ui.View):
     async def confirm_button(self, interaction: discord.Interaction, button):
         if interaction.channel.category_id == 1157425296732078192:
             embed = discord.Embed(color=discord.Color.red())
+            perms_ticket = {
+                interaction.guild.default_role: discord.PermissionOverwrite(
+                    view_channel=False
+                ),
+                interaction.user: discord.PermissionOverwrite(
+                    view_channel=True,
+                    send_messages=False,
+                ),
+            }
             await interaction.channel.edit(
-                category=interaction.guild.get_channel(1157425345851564052)
+                category=interaction.guild.get_channel(1157425345851564052),
+                overwrites=perms_ticket,
             )
             await interaction.response.send_message(
                 embed=discord.Embed(title="Ticket Closed", color=discord.Color.red()),
