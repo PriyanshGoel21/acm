@@ -96,6 +96,7 @@ import discord
 from discord.ext import commands
 
 from roles import Events
+from tick import Confirm, TicketBot, CloseTicket
 
 
 class CustomBot(commands.Bot):
@@ -118,6 +119,24 @@ class CustomBot(commands.Bot):
             self.tree.copy_global_to(guild=guild)
             await self.tree.sync(guild=guild)
         self.add_view(Events())
+        self.add_view(Confirm())
+        self.add_view(TicketBot())
+        self.add_view(CloseTicket())
+
+    async def on_member_join(self, member: discord.Member):
+        if member.guild.id == 1157385827756818535:
+            channel: discord.TextChannel = self.get_channel(1157385827756818535)
+            get_started: discord.TextChannel = self.get_channel(1157391112529510492)
+            await channel.send(
+                f"Hi {member.mention} Welcome to Elicit! Head over to {get_started.mention}"
+                f" to get roles and get started."
+            )
+        else:
+            channel: discord.TextChannel = self.get_channel(1112320464346431598)
+            await channel.send(
+                f"Hi {member.mention} Welcome to ACM MUJ! Head over to <id:customize>"
+                f" to get roles and get started."
+            )
 
 
 async def main():
