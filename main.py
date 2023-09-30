@@ -131,6 +131,10 @@ class CustomBot(commands.Bot):
                 f"Hi {member.mention} Welcome to Elicit! Head over to {get_started.mention}"
                 f" to get roles and get started."
             )
+            await member.send(
+                f"Hi {member.mention} Welcome to Elicit! Head over to {get_started.mention}"
+                f" to get roles and get started."
+            )
         else:
             channel: discord.TextChannel = self.get_channel(1112320464346431598)
             await channel.send(

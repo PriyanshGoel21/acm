@@ -93,12 +93,16 @@ class Contests(commands.Cog, name="contests"):
     # @commands.is_owner()
     @commands.command()
     async def decode(self, ctx: commands.Context):
-        await ctx.send(
-            embed=discord.Embed(
-                title="Choose Your Events", colour=discord.Colour.green()
-            ),
-            view=Events(),
-        )
+        # await ctx.send(
+        #     embed=discord.Embed(
+        #         title="Choose Your Events", colour=discord.Colour.green()
+        #     ),
+        #     view=Events(),
+        # )
+        cat: discord.CategoryChannel = ctx.guild.get_channel(1157385827756818537)
+        for x in range(1, 6):
+            await cat.create_voice_channel(f"Meeting Room {x}")
+        await ctx.message.delete()
 
 
 async def setup(bot: commands.Bot):
